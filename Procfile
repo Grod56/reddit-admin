@@ -1,0 +1,1 @@
+worker: python reddit-admin.py 0

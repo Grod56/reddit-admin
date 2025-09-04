@@ -1,0 +1,5 @@
+praw
+prawcore
+pmaw
+psycopg2
+python-dotenv
