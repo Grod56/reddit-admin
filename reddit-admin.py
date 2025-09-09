@@ -286,8 +286,8 @@ def __getInitialBotCredentials() -> BotCredentials:
     envUserAgent = os.getenv("USER_AGENT")
     envClientId = os.getenv("CLIENT_ID")
     envClientSecret = os.getenv("CLIENT_SECRET")
-    envUsername = os.getenv("USERNAME")
-    envPassword = os.getenv("PASSWORD")
+    envUsername = os.getenv("CLIENT_USERNAME")
+    envPassword = os.getenv("CLIENT_PASSWORD")
 
     if (
             envUserAgent and
