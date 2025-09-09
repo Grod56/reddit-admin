@@ -34,9 +34,6 @@ class AdminUpdaterRunner(ProgramRunner):
 
         # Retrieving values from config. file
         section = "AdminUpdaterRunner"
-        userProfile = configReader.get(
-            section, "userProfile"
-        )
         subredditName = configReader.get(
             section, "subredditName"
         )
@@ -63,7 +60,6 @@ class AdminUpdaterRunner(ProgramRunner):
         )
 
         # Instance variable processing and assignment
-        self._userProfile = userProfile
         self.__subredditName = subredditName
         self.__wikiPageName = wikiPageName
         self.__widgetID = widgetID

@@ -16,7 +16,7 @@ class CompletedSubmissionDAO:
     def add(self, dueSubmission: ScheduledSubmission):
         """Add (Mark) completed submission"""
 
-        sqlString = 'INSERT INTO CompletedSubmission (url, subreddit) ' \
+        sqlString = 'INSERT INTO "CompletedSubmission" (url, subreddit) ' \
                     'VALUES (%s, %s);'
         cursor = self.__connection.cursor()
 
@@ -34,7 +34,7 @@ class CompletedSubmissionDAO:
         Check if provided scheduled submission is completed
         """
 
-        sqlString = 'SELECT 1 FROM CompletedSubmission WHERE ' \
+        sqlString = 'SELECT 1 FROM "CompletedSubmission" WHERE ' \
                     'url = %s AND subreddit = %s;'
         cursor = self.__connection.cursor()
 

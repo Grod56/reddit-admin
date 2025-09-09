@@ -56,7 +56,7 @@ class FeatureTesterDAO:
 
     def acknowledge(self, featureTester: FeatureTester):
 
-        sqlString = "UPDATE FeatureTester SET expiry = %s " \
+        sqlString = 'UPDATE "FeatureTester" SET expiry = %s ' \
                     "WHERE username = %s;"
 
         cursor = self.__connection.cursor()

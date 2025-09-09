@@ -39,9 +39,9 @@ class MessageCommandProcessorRunner(ProgramRunner):
 
         # Retrieving initial variable values from the config. reader
         section = "MessageCommandProcessor"
-        userProfile = configReader.get(
-            section, "userProfile"
-        )
+        # userProfile = configReader.get(
+        #     section, "userProfile"
+        # )
         commands = json.loads(
             configReader.get(
                 section, "commands"
@@ -49,7 +49,6 @@ class MessageCommandProcessorRunner(ProgramRunner):
         )
 
         # Instance variable initialization
-        self._userProfile = userProfile
         self.__commands = commands
 
     def _runCore(self, redditInterface, connection):

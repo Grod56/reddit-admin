@@ -16,7 +16,7 @@ class CompletedCrosspostDAO:
     def add(self, completedCrosspost: ScheduledCrosspost):
         """Add (Acknowledge) completed crosspost"""
 
-        sqlString = 'INSERT INTO CompletedCrosspost(url, subreddit) VALUES ' \
+        sqlString = 'INSERT INTO "CompletedCrosspost"(url, subreddit) VALUES ' \
                     '(%s, %s);'
 
         cursor = self.__connection.cursor()
@@ -33,7 +33,7 @@ class CompletedCrosspostDAO:
     def checkCompleted(self, scheduledCrosspost: ScheduledCrosspost) -> bool:
         """Check if provided scheduled crosspost has been completed"""
 
-        sqlString = 'SELECT 1 FROM CompletedCrosspost ' \
+        sqlString = 'SELECT 1 FROM "CompletedCrosspost" ' \
                     'WHERE url=%s AND subreddit=%s;'
 
         cursor = self.__connection.cursor()

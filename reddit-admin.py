@@ -491,9 +491,7 @@ def __initializeBot():
         # Retrieving initial bot credentials
         __mainLogger.debug("Retrieving initial bot credentials")
         with __databaseConnectionFactory.getConnection() as databaseConnection:
-            botCredentials = __getInitialBotCredentials(
-                databaseConnection, configReader
-            )
+            botCredentials = __getInitialBotCredentials()
         __databaseConnectionFactory.yieldConnection(databaseConnection)
 
         # Initializing the Reddit Interface Factory

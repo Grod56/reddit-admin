@@ -35,12 +35,6 @@ class ScheduledPosterRunner(ProgramRunner):
         # Retrieving program runner variables from the config. file
 
         section = "ScheduledPosterRunner"
-        userProfile = configReader.get(
-            section, "userProfile"
-        )
-
-        self._userProfile = userProfile
-
     def _runCore(self, redditInterface, connection):
 
         prawReddit = redditInterface.getPrawReddit

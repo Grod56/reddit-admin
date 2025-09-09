@@ -19,7 +19,7 @@ class ScheduledCrosspostDAO:
         """Retrieve all scheduled crossposts"""
 
         sqlString = 'SELECT url, subreddit, scheduled_time, title ' \
-                    'FROM scheduledcrosspost;'
+                    'FROM "ScheduledCrosspost";'
 
         cursor = self.__connection.cursor()
 
@@ -49,7 +49,7 @@ class ScheduledCrosspostDAO:
         """Retrieve all scheduled crossposts for a particular url"""
 
         sqlString = 'SELECT url, subreddit, scheduled_time, title ' \
-                    'FROM ScheduledCrosspost ' \
+                    'FROM "ScheduledCrosspost" ' \
                     'WHERE url = %s;'
 
         cursor = self.__connection.cursor()
@@ -80,7 +80,7 @@ class ScheduledCrosspostDAO:
         the particular url
         """
 
-        sqlString = 'SELECT 1 FROM ScheduledCrosspost ' \
+        sqlString = 'SELECT 1 FROM "ScheduledCrosspost" ' \
                     'WHERE url = %s;'
 
         cursor = self.__connection.cursor()
@@ -98,7 +98,7 @@ class ScheduledCrosspostDAO:
     ):
         """Delete the provided scheduled crosspost"""
 
-        sqlString = "DELETE FROM ScheduledCrosspost " \
+        sqlString = 'DELETE FROM "ScheduledCrosspost" ' \
                     "WHERE url = % AND subreddit = %s;"
 
         cursor = self.__connection.cursor()

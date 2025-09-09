@@ -29,16 +29,13 @@ class RedditInterfaceFactory:
         self.__defaultBotCredentials = defaultBotCredentials
 
     @staticmethod
-    def __authenticated(prawRedditInstance) -> bool:
+    def __authenticated(prawRedditInstance: praw.Reddit) -> bool:
         """
         Convenience method to authenticate bot credentials
         provided to Reddit instance
         """
 
-        try:
-            return not (prawRedditInstance.user.me() is None)
-        except ResponseException or ReadOnlyException:
-            return False
+        return not prawRedditInstance.read_only
 
     def getRedditInterface(self) -> RedditInterface:
         """Retrieve new Reddit Interface"""

@@ -20,7 +20,7 @@ class ScheduledSubmissionDAO:
         """Retrieve all due scheduled submissions"""
 
         sqlString = "SELECT url, subreddit, title, scheduled_time, flair_id, comment_body " \
-                    "FROM ScheduledSubmission " \
+                    'FROM "ScheduledSubmission" ' \
                     "WHERE scheduled_time <= %s;"
 
         cursor = self.__connection.cursor()

@@ -38,16 +38,11 @@ class ScheduledCrossposterRunner(ProgramRunner):
         """Initialize the Scheduled Crossposter Runner"""
 
         section = "ScheduledCrossposterRunner"
-        userProfile = configReader.get(
-            section, "userProfile"
-        )
         subreddit = configReader.get(
             section, "subreddit"
         )
 
         # Initialization of instance variables
-
-        self._userProfile = userProfile
         self.__subreddit = subreddit
 
     def _runCore(self, redditInterface, connection):
