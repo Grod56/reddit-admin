@@ -3,5 +3,4 @@
 *
 */
 !.gitignore
-!reddit-admin.ini
-!reddit-admin.sql
+!plugins.ini
