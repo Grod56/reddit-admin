@@ -1,6 +1,0 @@
-# .gitignore for the resources folder
-
-*
-*/
-!.gitignore
-!plugins.ini
