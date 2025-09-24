@@ -8,13 +8,13 @@ from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 from typing import List
 
-from src.redditadmin.utility.botcredentials import BotCredentials
-from src.redditadmin.utility.exceptions import BotInitializationError, InvalidBotCredentialsError
-from src.redditadmin.plugin.asynchronouspluginsexecutor import AsynchronousPluginsExecutor
-from src.redditadmin.plugin.exceptions import PluginsExecutorInitializationError
-from src.redditadmin.plugin.plugin import Plugin
-from src.redditadmin.plugin.pluginsexecutor import PluginsExecutor
-from src.redditadmin.plugin.redditinterfacefactory import RedditInterfaceFactory
+from .utility.botcredentials import BotCredentials
+from .utility.exceptions import BotInitializationError, InvalidBotCredentialsError
+from .plugin.asynchronouspluginsexecutor import AsynchronousPluginsExecutor
+from .plugin.exceptions import PluginsExecutorInitializationError
+from .plugin.plugin import Plugin
+from .plugin.pluginsexecutor import PluginsExecutor
+from .plugin.redditinterfacefactory import RedditInterfaceFactory
 
 
 class RedditAdmin(ABC):
