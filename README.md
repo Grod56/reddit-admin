@@ -56,7 +56,15 @@ _NOTE: `RedditAdmin.run()` is a blocking command, meaning that no further code w
 Console output:
 
 ```
-redditadmin.core : Initializing the bot                                                                                 Asynchronous Plugins Executor : Initializing Plugins Executor                                                           Asynchronous Plugins Executor : Retrieving initial program commands                                                     Asynchronous Plugins Executor : Executing initial program commands                                                      Asynchronous Plugins Executor : Running program 'plugin1_program'                                                       Asynchronous Plugins Executor : Running program 'plugin2_program'                                                  Asynchronous Plugins Executor : Programs Executor initialized                                                           redditadmin.core : Bot successfully initialized                                                                         redditadmin.core : The bot is now running
+redditadmin.core : Initializing the bot
+Asynchronous Plugins Executor : Initializing Plugins Executor
+Asynchronous Plugins Executor : Retrieving initial program commands
+Asynchronous Plugins Executor : Executing initial program commands
+Asynchronous Plugins Executor : Running program 'plugin1_program'
+Asynchronous Plugins Executor : Running program 'plugin2_program'
+Asynchronous Plugins Executor : Programs Executor initialized
+redditadmin.core : Bot successfully initialized
+redditadmin.core : The bot is now running
 ```
 
 ### Bot modes
