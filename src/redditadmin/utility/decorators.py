@@ -11,10 +11,9 @@ from prawcore.exceptions import RequestException, ServerError
 
 def consumestransientapierrors(_execute_function=None, *, timeout: int = 30):
     """
-    Decorator responsible for consuming common transient
-    errors which may occur while connecting to the
-    Reddit API during the running of the provided
-    program
+    Consumes common transient errors which may
+    occur while connecting to the Reddit API during
+    the running of the provided program
     """
 
     def subsuming_function(execute_function):

@@ -1,14 +1,39 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 from typing import Dict
 
+from ..utility.miscellaneous import InitializationError
 
-class PluginsExecutor(ABC):
+
+class PluginsExecutor(metaclass=ABCMeta):
     """
-    Class responsible for executing plugins
+    Executes plugins
     """
+
+    @abstractmethod
+    def execute_program(self, program_command):
+        """Execute the provided program command"""
+        ...
+
+    @abstractmethod
+    def get_program_statuses(self) -> Dict[str, str]:
+        """Get the executed program statuses"""
+        ...
+
+    @abstractmethod
+    def shut_down(self, *args):
+        """Shut down the plugins executor"""
+        ...
+
+    @abstractmethod
+    def is_shut_down(self) -> bool:
+        """Check if the Plugins Executor is shut down"""
+        ...
+
+
+class AbstractPluginsExecutor(PluginsExecutor, metaclass=ABCMeta):
 
     _isPluginsExecutorShutDown: bool
     _pluginsExecutorLogger: logging.Logger
@@ -19,25 +44,11 @@ class PluginsExecutor(ABC):
         )
         self._isPluginsExecutorShutDown = False
 
-    @abstractmethod
-    def execute_program(self, program_command):
-        """Execute the provided program command"""
-
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_program_statuses(self) -> Dict[str, str]:
-        """Get the executed program statuses"""
-
-        raise NotImplementedError
-
     def shut_down(self, *args):
-        """Shut down the plugins executor"""
 
         self._isPluginsExecutorShutDown = True
 
     def is_shut_down(self) -> bool:
-        """Check if the Plugins Executor is shut down"""
 
         return self._isPluginsExecutorShutDown
 
@@ -52,3 +63,12 @@ class PluginsExecutor(ABC):
                 "The plugins executor cannot execute any more program "
                 "after it has been shut down"
             )
+
+
+class PluginsExecutorInitializationError(InitializationError):
+    """
+    Raised when initialization of a Plugins Executor module fails
+    """
+
+    def __init__(self, *args):
+        super().__init__(*args)

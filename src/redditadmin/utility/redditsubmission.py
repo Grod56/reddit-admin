@@ -1,18 +1,26 @@
+from abc import abstractmethod, ABCMeta
+
 from praw.models import Submission
 
 
-class RedditSubmission:
+class RedditSubmission(metaclass=ABCMeta):
     """
-    Class encapsulating a submission
+    Encapsulates a submission
     """
 
-    __submissionId: str
+    @property
+    @abstractmethod
+    def submission_id(self):
+        ...
+
+
+class RedditSubmissionImplementation(RedditSubmission):
 
     def __init__(self, submission_id):
         self.__submissionId = submission_id
 
     @property
-    def get_submission_id(self):
+    def submission_id(self):
         return self.__submissionId
 
     @classmethod
@@ -20,17 +28,17 @@ class RedditSubmission:
             cls, submission_id: str
     ):
         """
-        Returns a SimpleSubmission object from
-        the provided submissionId
+        Returns a RedditSubmission object from
+        the provided submission_id
         """
-        return RedditSubmission(submission_id)
+        return RedditSubmissionImplementation(submission_id)
 
     @classmethod
     def get_submission_from_praw_submission(
             cls, praw_submission: Submission
     ):
         """
-        Returns a SimpleSubmission object from
+        Returns a RedditSubmission object from
         the provided PRAW submission
         """
-        return RedditSubmission(praw_submission.id)
+        return RedditSubmissionImplementation(praw_submission.id)

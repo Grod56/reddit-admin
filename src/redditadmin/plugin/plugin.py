@@ -1,19 +1,41 @@
 import logging
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 from typing import TypeVar, Generic
 
 from ..program.program import Program
 from ..utility.redditinterface import RedditInterface
-from ..utility.exceptions import InitializationError
+from ..utility.miscellaneous import InitializationError
 
 T = TypeVar("T", bound=Program)
 
 
-class Plugin(Generic[T], ABC):
+class Plugin(Generic[T], metaclass=ABCMeta):
     """
-    Class responsible for generating multiple
-    instances of a specific program
+    Generates multiple instances of a specific program
     """
+
+    @abstractmethod
+    def get_program(self, reddit_interface: RedditInterface) -> T:
+        """Get new program instance"""
+        ...
+
+    @abstractmethod
+    def get_program_command(self) -> str:
+        """Get the program command string"""
+        ...
+
+    @abstractmethod
+    def is_shut_down(self) -> bool:
+        """Check if plugin is shut down"""
+        ...
+
+    @abstractmethod
+    def shut_down(self):
+        """Shut down the plugin"""
+        ...
+
+
+class AbstractPlugin(Plugin[T], metaclass=ABCMeta):
 
     _programCommand: str
     _pluginLogger: logging.Logger
@@ -29,22 +51,13 @@ class Plugin(Generic[T], ABC):
         )
         self._isPluginShutDown = False
 
-    @abstractmethod
-    def get_program(self, reddit_interface: RedditInterface) -> T:
-        """Get new program instance"""
-
-        raise NotImplementedError
-
     def get_program_command(self) -> str:
-        """Get the program command string"""
         return self._programCommand
 
     def is_shut_down(self) -> bool:
-        """Check if plugin is shut down"""
         return self._isPluginShutDown
 
     def shut_down(self):
-        """Shut down the plugin"""
         self._isPluginShutDown = True
 
     def __eq__(self, value) -> bool:
@@ -54,8 +67,7 @@ class Plugin(Generic[T], ABC):
 
 class PluginInitializationError(InitializationError):
     """
-    Class to encapsulate an error in the initialization
-    of a plugin module
+    Raised when initialization of a plugin module fails
     """
 
     def __init__(self, *args):

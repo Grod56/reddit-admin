@@ -1,31 +1,36 @@
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 from typing import Generator, Callable
 
 from praw.models import Subreddit, ListingGenerator
 from praw.models.util import stream_generator
 
-from .program import RecurringProgram
+from .program import RecurringProgram, AbstractRecurringProgram
 from ..utility.decorators import consumestransientapierrors
 
 
-class StreamFactory(ABC):
+class StreamFactory(metaclass=ABCMeta):
     """
-    Class responsible for producing
-    new Reddit Object streams at request
+    Produces new Reddit Object streams at request
     """
 
     @abstractmethod
     def get_new_stream(self) -> Generator:
         """Produce new stream"""
+        ...
 
-        raise NotImplementedError()
 
-
-class StreamProcessingProgram(RecurringProgram, ABC):
+class StreamProcessingProgram(RecurringProgram, metaclass=ABCMeta):
     """
-    Class encapsulating a stream processing
-    program
+    Encapsulates a stream processing program
     """
+
+    @abstractmethod
+    def _run_pause_handler(self, *args):
+        """Execute when stream is paused"""
+        ...
+
+
+class AbstractStreamProcessingProgram(StreamProcessingProgram, AbstractRecurringProgram, metaclass=ABCMeta):
 
     def __init__(
             self,
@@ -33,7 +38,10 @@ class StreamProcessingProgram(RecurringProgram, ABC):
             stop_condition: Callable[..., bool],
             program_name: str
     ):
-        super().__init__(program_name, stop_condition)
+        super().__init__(
+            program_name=program_name,
+            stop_condition=stop_condition
+        )
         self.__streamFactory = stream_factory
 
     @consumestransientapierrors
@@ -60,15 +68,14 @@ class StreamProcessingProgram(RecurringProgram, ABC):
 
                 self._run_nature_core(streamItem)
 
+    # TODO: Revisit
     def _run_pause_handler(self, *args):
-        """Execute when stream is paused"""
         pass
 
 
 class SubmissionStreamFactory(StreamFactory):
     """
-    Class responsible for producing
-    new Submission streams at request
+    Produces new Submission streams at request
     """
 
     def __init__(
@@ -91,8 +98,7 @@ class SubmissionStreamFactory(StreamFactory):
 
 class CommentStreamFactory(StreamFactory):
     """
-    Class responsible for producing
-    new Comment streams at request
+    Produces new Comment streams at request
     """
 
     def __init__(
@@ -115,8 +121,7 @@ class CommentStreamFactory(StreamFactory):
 
 class CustomStreamFactory(StreamFactory):
     """
-    Class responsible for producing new
-    stream of custom Reddit objects according to
+    Produces new stream of custom Reddit objects according to
     the provided Listing Generator
     """
 

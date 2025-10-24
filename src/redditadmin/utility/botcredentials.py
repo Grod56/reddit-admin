@@ -1,13 +1,43 @@
-class BotCredentials:
+from abc import ABCMeta, abstractmethod
+
+
+class BotCredentials(metaclass=ABCMeta):
     """
-    Class holding the bot's credentials
+    Encapsulates the bot's credentials
     """
 
-    __user_agent: str
-    __client_id: str
-    __client_secret: str
-    __username: str
-    __password: str
+    @property
+    @abstractmethod
+    def password(self) -> str:
+        """Retrieve the bot's Password"""
+        ...
+
+    @property
+    @abstractmethod
+    def client_secret(self) -> str:
+        """Retrieve the bot's Client Secret"""
+        ...
+
+    @property
+    @abstractmethod
+    def client_id(self) -> str:
+        """Retrieve the bot's Client ID"""
+        ...
+
+    @property
+    @abstractmethod
+    def user_agent(self) -> str:
+        """Retrieve the bot's User Agent"""
+        ...
+
+    @property
+    @abstractmethod
+    def username(self) -> str:
+        """Retrieve the bot's Username"""
+        ...
+
+
+class BotCredentialsImplementation(BotCredentials):
 
     def __init__(
             self,
@@ -24,40 +54,30 @@ class BotCredentials:
         self.__password = password
 
     @property
-    def get_user_agent(self):
-        """Retrieve the bot's User Agent"""
-
+    def user_agent(self) -> str:
         return self.__user_agent
 
     @property
-    def get_client_id(self):
-        """Retrieve the bot's Client ID"""
-
+    def client_id(self):
         return self.__client_id
 
     @property
-    def get_client_secret(self):
-        """Retrieve the bot's Client Secret"""
-
+    def client_secret(self):
         return self.__client_secret
 
     @property
-    def getusername(self):
-        """Retrieve the bot's Username"""
-
+    def username(self):
         return self.__username
 
     @property
-    def get_password(self):
-        """Retrieve the bot's Password"""
-
+    def password(self):
         return self.__password
 
-    def clear_credentials(self):
-        """Convenience method to clear the bot's credentials"""
 
-        self.__user_agent = ""
-        self.__client_id = ""
-        self.__client_secret = ""
-        self.__username = ""
-        self.__password = ""
+class InvalidBotCredentialsError(Exception):
+    """
+    Raised when provided bot credentials are invalid
+    """
+
+    def __init__(self, *args):
+        super().__init__(self, args)

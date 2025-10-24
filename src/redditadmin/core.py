@@ -1,43 +1,36 @@
 import logging
 import os
 import signal
-import sys
 import time
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 from typing import List
 
-from .utility.botcredentials import BotCredentials
-from .utility.exceptions import BotInitializationError, InvalidBotCredentialsError
+from .utility.botcredentials import InvalidBotCredentialsError, BotCredentials,\
+    BotCredentialsImplementation
+from .utility.miscellaneous import BotInitializationError
 from .plugin.asynchronouspluginsexecutor import AsynchronousPluginsExecutor
-from .plugin.exceptions import PluginsExecutorInitializationError
 from .plugin.plugin import Plugin
-from .plugin.pluginsexecutor import PluginsExecutor
-from .plugin.redditinterfacefactory import RedditInterfaceFactory
+from .plugin.pluginsexecutor import PluginsExecutor, PluginsExecutorInitializationError
+from .plugin.redditinterfacefactory import RedditInterfaceFactory, DefaultRedditInterfaceFactory
 
 
-class RedditAdmin(ABC):
-    """Type encapsulating a RedditAdmin instance"""
-
-    def __init__(self, *args):
-        pass
+class RedditAdmin(metaclass=ABCMeta):
+    """Encapsulates RedditAdmin bot"""
 
     @abstractmethod
     def run(self, bot_credentials: BotCredentials, listen: bool = False):
         """Run the bot"""
-
-        raise NotImplementedError
+        ...
 
     @abstractmethod
-    def stop(self):
+    def stop(self, wait: bool):
         """Shutdown the bot"""
+        ...
 
-        raise NotImplementedError
 
-
-class RedditAdminImplementation(RedditAdmin):
-    """Reddit Admin Bot"""
+class _RedditAdminImplementation(RedditAdmin):
 
     __plugins: List[Plugin]
     __pluginsExecutor: PluginsExecutor
@@ -54,7 +47,6 @@ class RedditAdminImplementation(RedditAdmin):
     # -------------------------------------------------------------------------------
 
     def __init__(self, plugins: List[Plugin]):
-        super().__init__(self)
         self.__plugins = plugins
 
     def __initialize_logging(self, log_file_name: str):
@@ -106,7 +98,7 @@ class RedditAdminImplementation(RedditAdmin):
         # Setting the default console logging level global variable
         self.__defaultConsoleLoggingLevel = console_handler.level
 
-    def ___get_new_bot_credentials(self) -> BotCredentials:
+    def __get_new_bot_credentials(self) -> BotCredentials:
         """Convenience method to retrieve bot credentials from user input"""
 
         try:
@@ -125,7 +117,7 @@ class RedditAdminImplementation(RedditAdmin):
                 # Resume console logging
                 self.__resume_console_logging()
 
-                return BotCredentials(
+                return BotCredentialsImplementation(
                     user_agent, client_id,
                     client_secret, username,
                     password
@@ -144,7 +136,7 @@ class RedditAdminImplementation(RedditAdmin):
         # instance from provided credentials
 
         try:
-            reddit_interface_factory = RedditInterfaceFactory(
+            reddit_interface_factory = DefaultRedditInterfaceFactory(
                 bot_credentials
             )
         # Handle if credential authentication fails
@@ -154,7 +146,7 @@ class RedditAdminImplementation(RedditAdmin):
                 "Please enter new valid credentials"
             )
             try:
-                new_bot_credentials = self.___get_new_bot_credentials()
+                new_bot_credentials = self.__get_new_bot_credentials()
                 reddit_interface_factory = self.__get_reddit_interface_factory(new_bot_credentials)
             except (KeyboardInterrupt, EOFError):
                 raise BotInitializationError(
@@ -206,6 +198,7 @@ class RedditAdminImplementation(RedditAdmin):
             self.__pluginsExecutor = self.__initialize_plugins_executor(
                 bot_credentials
             )
+            self.__mainLogger.info("Bot successfully initialized")
 
             # -------------------------------------------------------------------------------
 
@@ -213,13 +206,10 @@ class RedditAdminImplementation(RedditAdmin):
         except BotInitializationError as er:
             self.__mainLogger.critical(
                 "A fatal error occurred during the "
-                "bot's initialization. The application "
-                "will now exit. Error(s): " + str(er),
+                "bot's initialization. Error(s): " + str(er),
                 exc_info=True
             )
-            sys.exit(2)  # TODO: May need future cleaning up
-
-        self.__mainLogger.info("Bot successfully initialized")
+            raise er
 
     # -------------------------------------------------------------------------------
 
@@ -310,21 +300,7 @@ class RedditAdminImplementation(RedditAdmin):
                 "'{}' is not a valid bot command".format(command)
             )
 
-    @staticmethod
-    def __kill_bot():
-        """Forcefully shut down the bot"""
-
-        # Windows kill command
-        if (
-                sys.platform.startswith('win32') or
-                sys.platform.startswith('cygwin')
-        ):
-            os.kill(os.getpid(), signal.CTRL_BREAK_EVENT)
-
-        # Linux kill command
-        os.kill(os.getpid(), signal.SIGKILL)
-
-    def __shut_down_bot(self, wait=True, shutdown_exit_code=0):
+    def __shut_down_bot(self, wait=True):
         """Shut down the bot"""
 
         if wait:
@@ -342,29 +318,12 @@ class RedditAdminImplementation(RedditAdmin):
                     )
                 )
             )
-            try:
-                self.__pluginsExecutor.shut_down(True)
-                self.__mainLogger.info('Bot successfully shut down')
-                if shutdown_exit_code != 0:
-                    sys.exit(shutdown_exit_code)
-
-            # Handle keyboard interrupt midway through graceful shutdown
-            except KeyboardInterrupt:
-
-                self.__mainLogger.warning(
-                    'Graceful shutdown aborted.'
-                )
-                self.__pluginsExecutor.shut_down(False)
-                self.__mainLogger.info('Bot shut down')
-
-                # Killing the process (only way to essentially stop all threads)
-                self.__kill_bot()
+            self.__pluginsExecutor.shut_down(True)
+            self.__mainLogger.info('Bot successfully shut down')
 
         else:
             self.__pluginsExecutor.shut_down(False)
             self.__mainLogger.info('Bot shut down')
-
-            self.__kill_bot()
 
     def __is_bot_shut_down(self):
         """Check if bot is shutdown"""
@@ -389,7 +348,7 @@ class RedditAdminImplementation(RedditAdmin):
                 'a graceful shutdown is attempted or press '
                 'Ctrl+C to exit immediately'
             )
-            self.__shut_down_bot(True, 1)
+            self.__shut_down_bot(True)
 
         # Handle unknown exception while bot is running
         except BaseException as ex:
@@ -399,7 +358,7 @@ class RedditAdminImplementation(RedditAdmin):
                 "a graceful shutdown is attempted or press "
                 "Ctrl+C to exit immediately: " + str(ex.args), exc_info=True
             )
-            self.__shut_down_bot(True, 2)
+            self.__shut_down_bot(True)
 
     def run(self, bot_credentials: BotCredentials, listen: bool = False):
 
@@ -427,9 +386,9 @@ class RedditAdminImplementation(RedditAdmin):
             if not self.__is_bot_shut_down():
                 self.__shut_down_bot()
 
-    def stop(self):
+    def stop(self, wait: bool):
 
-        self.__shut_down_bot()
+        self.__shut_down_bot(wait=wait)
 
     # -------------------------------------------------------------------------------
 
@@ -437,4 +396,4 @@ class RedditAdminImplementation(RedditAdmin):
 def get_reddit_admin(plugins: List[Plugin]) -> RedditAdmin:
     """Get a Reddit Admin instance"""
 
-    return RedditAdminImplementation(plugins=plugins)
+    return _RedditAdminImplementation(plugins)

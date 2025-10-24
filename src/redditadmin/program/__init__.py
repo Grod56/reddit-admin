@@ -1,3 +1,5 @@
-from .program import Program, RecurringProgram
-from .streamprocessingprogram import StreamProcessingProgram, StreamFactory, SubmissionStreamFactory, \
-    CommentStreamFactory, CustomStreamFactory
+from .program import Program as IProgram, AbstractProgram as Program,\
+    RecurringProgram as IRecurringProgram, AbstractRecurringProgram as RecurringProgram
+from .streamprocessingprogram import StreamProcessingProgram as IStreamProcessingProgram,\
+    AbstractStreamProcessingProgram as StreamProcessingProgram,\
+    StreamFactory, SubmissionStreamFactory, CommentStreamFactory, CustomStreamFactory

@@ -1,49 +1,47 @@
+from abc import ABCMeta, abstractmethod
+
 import praw
 
-from ..utility.botcredentials import BotCredentials
-from ..utility.exceptions import InvalidBotCredentialsError
-from ..utility.redditinterface import RedditInterface
+from ..utility.botcredentials import BotCredentials, InvalidBotCredentialsError
+from ..utility.miscellaneous import is_reddit_authenticated
+from ..utility.redditinterface import RedditInterface, RedditInterfaceImplementation
 
 
-class RedditInterfaceFactory:
+class RedditInterfaceFactory(metaclass=ABCMeta):
     """Factory for RedditInterface objects"""
 
-    __botCredentials: BotCredentials
+    @abstractmethod
+    def get_reddit_interface(self) -> RedditInterface:
+        """Retrieve new Reddit Interface"""
+        ...
+
+
+class DefaultRedditInterfaceFactory(RedditInterfaceFactory):
 
     def __init__(
             self,
             bot_credentials: BotCredentials
     ):
         praw_reddit = praw.Reddit(
-            user_agent=bot_credentials.get_user_agent,
-            client_id=bot_credentials.get_client_id,
-            client_secret=bot_credentials.get_client_secret,
-            username=bot_credentials.getusername,
-            password=bot_credentials.get_password
+            user_agent=bot_credentials.user_agent,
+            client_id=bot_credentials.client_id,
+            client_secret=bot_credentials.client_secret,
+            username=bot_credentials.username,
+            password=bot_credentials.password
         )
-        if not self.__authenticated(praw_reddit):
+        if not is_reddit_authenticated(praw_reddit):
             raise InvalidBotCredentialsError
 
         self.__botCredentials = bot_credentials
 
-    @staticmethod
-    def __authenticated(praw_reddit_instance: praw.Reddit) -> bool:
-        """
-        Convenience method to authenticate bot credentials
-        provided to Reddit instance
-        """
-
-        return not praw_reddit_instance.read_only
-
-    def get_reddit_interface(self) -> RedditInterface:
-        """Retrieve new Reddit Interface"""
+    def get_reddit_interface(self):
 
         bot_credentials = self.__botCredentials
         praw_reddit = praw.Reddit(
-            user_agent=bot_credentials.get_user_agent,
-            client_id=bot_credentials.get_client_id,
-            client_secret=bot_credentials.get_client_secret,
-            username=bot_credentials.getusername,
-            password=bot_credentials.get_password
+            user_agent=bot_credentials.user_agent,
+            client_id=bot_credentials.client_id,
+            client_secret=bot_credentials.client_secret,
+            username=bot_credentials.username,
+            password=bot_credentials.password
         )
-        return RedditInterface(praw_reddit)
+        return RedditInterfaceImplementation(praw_reddit)

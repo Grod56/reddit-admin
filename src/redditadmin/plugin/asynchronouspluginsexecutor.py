@@ -3,22 +3,19 @@
 import concurrent.futures
 from concurrent.futures import ThreadPoolExecutor, Future
 from typing import Dict, List
-from .pluginsexecutor import PluginsExecutor
+from .pluginsexecutor import AbstractPluginsExecutor, PluginsExecutorInitializationError
 from .redditinterfacefactory import RedditInterfaceFactory
 from .plugin import Plugin
-from .exceptions import PluginsExecutorInitializationError
 
 
-class AsynchronousPluginsExecutor(PluginsExecutor):
+class AsynchronousPluginsExecutor(AbstractPluginsExecutor):
     """
-    Class responsible for asynchronously executing
-    multiple plugins in different threads
+    Executes multiple plugins in different threads
     """
 
     __executor: ThreadPoolExecutor
     __plugins: Dict[str, Plugin]
     __executedPrograms: Dict[str, Future]
-    __redditInterfaceFactory: RedditInterfaceFactory
 
     def __init__(
             self,
@@ -182,7 +179,6 @@ class AsynchronousPluginsExecutor(PluginsExecutor):
             )
 
     def get_program_statuses(self):
-        """Get the executed program statuses"""
 
         program_statuses = \
             {
@@ -192,7 +188,6 @@ class AsynchronousPluginsExecutor(PluginsExecutor):
         return program_statuses
 
     def shut_down(self, wait):
-        """Shut down the plugin executor"""
 
         super().shut_down()
         for plugin in self.__plugins.values():

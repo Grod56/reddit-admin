@@ -116,17 +116,21 @@ Plugin:
 
 ```py
 class MyPlugin[Plugin[MyProgram]]
-    """The plugin for our program"""
 
-    def __init__():
-        super().__init__("myprogram")
 
-    def get_program(self, reddit_interface):
-        """Overriden from Plugin superclass"""
+"""The plugin for our program"""
 
-        praw_reddit = reddit_interface.get_praw_reddit
 
-        return MyProgram(praw_reddit)
+def __init__():
+    super().__init__("myprogram")
+
+
+def get_program(self, reddit_interface):
+    """Overriden from Plugin superclass"""
+
+    praw_reddit = reddit_interface.praw_reddit
+
+    return MyProgram(praw_reddit)
 ```
 
 Voila! We may now supply our plugin to the bot and run it just as we did before

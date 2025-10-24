@@ -1,19 +1,27 @@
 # -*- coding: utf-8 -*
+from abc import ABCMeta, abstractmethod
+
 from praw import Reddit
 
 
-class RedditInterface:
+class RedditInterface(metaclass=ABCMeta):
     """
-    Class holding tools to interface with the Reddit API
+    Encapsulates tools to interface with the Reddit API
     """
 
-    __prawReddit: Reddit
+    @property
+    @abstractmethod
+    def praw_reddit(self):
+        """Retrieve the interface's PrawReddit instance"""
+        ...
+
+
+class RedditInterfaceImplementation(RedditInterface):
 
     def __init__(self, praw_reddit: Reddit):
         self.__prawReddit = praw_reddit
 
     @property
-    def get_praw_reddit(self):
-        """Retrieve the interface's PrawReddit instance"""
+    def praw_reddit(self):
 
         return self.__prawReddit
