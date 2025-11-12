@@ -34,8 +34,7 @@ def retrieve_select_submissions(
         submission_ids: List[str]
 ) -> List[Submission]:
     """
-    Retrieves submissions with the given
-    submissionIds
+    Retrieves submissions with the given submissionIds
     """
 
     submissions = []
@@ -44,7 +43,6 @@ def retrieve_select_submissions(
         submissions.append(
             praw_reddit.submission(submissionId)
         )
-
     return submissions
 
 

@@ -35,6 +35,7 @@ class AbstractProgram(Program, metaclass=ABCMeta):
             program_name
         )
 
+    @property
     def program_name(self):
         return self.__program_name
 

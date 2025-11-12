@@ -1,8 +1,8 @@
 import logging
 import os
-import signal
 import time
 from abc import ABCMeta, abstractmethod
+from concurrent.futures import ThreadPoolExecutor
 from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 from typing import List
@@ -20,12 +20,12 @@ class RedditAdmin(metaclass=ABCMeta):
     """Encapsulates RedditAdmin bot"""
 
     @abstractmethod
-    def run(self, bot_credentials: BotCredentials, listen: bool = False):
+    def run(self, bot_credentials: BotCredentials, *args, **kwargs):
         """Run the bot"""
         ...
 
     @abstractmethod
-    def stop(self, wait: bool):
+    def stop(self, *args, **kwargs):
         """Shutdown the bot"""
         ...
 
@@ -163,11 +163,13 @@ class _RedditAdminImplementation(RedditAdmin):
         # Initializing the Plugins Executor
 
         reddit_interface_factory = self.__get_reddit_interface_factory(bot_credentials)
+        executor = ThreadPoolExecutor()
 
         try:
             plugins_executor = AsynchronousPluginsExecutor(
                 plugins=self.__plugins,
-                reddit_interface_factory=reddit_interface_factory
+                reddit_interface_factory=reddit_interface_factory,
+                executor=executor
             )
 
         # Handle if there is an error initializing the Programs Executor
@@ -360,11 +362,12 @@ class _RedditAdminImplementation(RedditAdmin):
             )
             self.__shut_down_bot(True)
 
-    def run(self, bot_credentials: BotCredentials, listen: bool = False):
+    def run(self, bot_credentials: BotCredentials, listen: bool = False, **kwargs):
 
+        # (TODO: TO BE REMOVED - excluded because they only work within main thread)
         # Setting up interrupt signal handlers
-        signal.signal(signal.SIGINT, signal.default_int_handler)
-        signal.signal(signal.SIGTERM, signal.default_int_handler)
+        # signal.signal(signal.SIGINT, signal.default_int_handler)
+        # signal.signal(signal.SIGTERM, signal.default_int_handler)
 
         # Start bot
         self.__start_bot(bot_credentials, listen)
@@ -386,7 +389,7 @@ class _RedditAdminImplementation(RedditAdmin):
             if not self.__is_bot_shut_down():
                 self.__shut_down_bot()
 
-    def stop(self, wait: bool):
+    def stop(self, wait: bool = True):
 
         self.__shut_down_bot(wait=wait)
 
@@ -396,4 +399,4 @@ class _RedditAdminImplementation(RedditAdmin):
 def get_reddit_admin(plugins: List[Plugin]) -> RedditAdmin:
     """Get a Reddit Admin instance"""
 
-    return _RedditAdminImplementation(plugins)
+    return _RedditAdminImplementation(plugins=plugins)

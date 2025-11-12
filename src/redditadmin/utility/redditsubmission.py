@@ -26,7 +26,7 @@ class RedditSubmissionImplementation(RedditSubmission):
     @classmethod
     def get_submission_from_id(
             cls, submission_id: str
-    ):
+    ) -> RedditSubmission:
         """
         Returns a RedditSubmission object from
         the provided submission_id
@@ -36,7 +36,7 @@ class RedditSubmissionImplementation(RedditSubmission):
     @classmethod
     def get_submission_from_praw_submission(
             cls, praw_submission: Submission
-    ):
+    ) -> RedditSubmission:
         """
         Returns a RedditSubmission object from
         the provided PRAW submission

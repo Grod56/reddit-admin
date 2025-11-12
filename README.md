@@ -1,6 +1,6 @@
 # Reddit Admin
 
-[![pypi](https://img.shields.io/pypi/v/redditadmin.svg)](https://pypi.org/project/redditadmin/)
+[![build](https://github.com/Grod56/reddit-admin/actions/workflows/build.yml/badge.svg)](https://github.com/Grod56/reddit-admin/actions/workflows/build.yml) [![pypi](https://img.shields.io/pypi/v/redditadmin.svg)](https://pypi.org/project/redditadmin/)
 
 Plugin-based, extensible administrative Reddit bot framework capable of managing and running multiple 'plugins' (i.e. scripts) asynchronously. Built on top of the PRAW API client wrapper.
 

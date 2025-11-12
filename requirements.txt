@@ -1,2 +1,5 @@
-praw
-prawcore
+praw~=7.8.1
+prawcore~=2.4.0
+pytest~=8.4.2
+pytest-mock
+requests~=2.32.5

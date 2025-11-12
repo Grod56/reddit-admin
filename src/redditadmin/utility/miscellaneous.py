@@ -1,4 +1,6 @@
 import praw
+from praw.exceptions import ReadOnlyException
+from prawcore import ResponseException
 
 
 class InitializationError(Exception):
@@ -25,4 +27,7 @@ def is_reddit_authenticated(praw_reddit_instance: praw.Reddit) -> bool:
     provided to Reddit instance
     """
 
-    return not praw_reddit_instance.read_only
+    try:
+        return not (praw_reddit_instance.user.me() is None)
+    except ResponseException or ReadOnlyException:
+        return False

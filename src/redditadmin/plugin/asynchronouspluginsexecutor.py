@@ -49,7 +49,7 @@ class AsynchronousPluginsExecutor(AbstractPluginsExecutor):
             self._pluginsExecutorLogger.debug(
                 "Executing initial program commands"
             )
-            self.execute_programs()
+            self.__execute_programs()
 
         # Handle in case the program executor fails to initialize
         except PluginsExecutorInitializationError as ex:
@@ -70,7 +70,7 @@ class AsynchronousPluginsExecutor(AbstractPluginsExecutor):
         if self._inform_if_shut_down():
             return
 
-        # Checking if there are duplicate running program
+        # Checking if there are duplicate running programs
         if program_command in self.__executedPrograms.keys():
             if not self.__executedPrograms[program_command].done():
                 self._pluginsExecutorLogger.warning(
@@ -98,7 +98,8 @@ class AsynchronousPluginsExecutor(AbstractPluginsExecutor):
             raise task.exception(0.1)
 
         # Add to running program if task was started successfully
-        except concurrent.futures.TimeoutError:
+        # TODO: To be revised
+        except (concurrent.futures.TimeoutError, _PluginExecutionCompletedException):
 
             self.__executedPrograms[program_command] = task
 
@@ -113,15 +114,15 @@ class AsynchronousPluginsExecutor(AbstractPluginsExecutor):
             )
 
         # Handle if plugin task failed to run
-        except TypeError:
+        except TypeError as ex:
             self._pluginsExecutorLogger.error(
-                "Failed to run the plugin '{}'".format(
-                    program_command
-                )
+                "Failed to run the plugin '{}'. Error: {}".format(
+                    program_command, str(ex.args)
+                ), exc_info=True
             )
 
-    def execute_programs(self):
-        """Execute multiple program"""
+    def __execute_programs(self):
+        """Execute multiple programs"""
 
         # Confirm if shut down first
         if self._inform_if_shut_down():
@@ -158,6 +159,7 @@ class AsynchronousPluginsExecutor(AbstractPluginsExecutor):
                             program_name
                         )
                     )
+                raise _PluginExecutionCompletedException
 
             # Raise error if provided program does not exist
             else:
@@ -166,7 +168,7 @@ class AsynchronousPluginsExecutor(AbstractPluginsExecutor):
                 )
 
         # Handle if provided program not found
-        except ValueError as ex:
+        except (ValueError, _PluginExecutionCompletedException) as ex:
             raise ex
 
         # Handle if unexpected exception crashes a program TODO: Revisit
@@ -187,7 +189,7 @@ class AsynchronousPluginsExecutor(AbstractPluginsExecutor):
             }
         return program_statuses
 
-    def shut_down(self, wait):
+    def shut_down(self, wait: bool = True):
 
         super().shut_down()
         for plugin in self.__plugins.values():
@@ -196,3 +198,10 @@ class AsynchronousPluginsExecutor(AbstractPluginsExecutor):
         self._pluginsExecutorLogger.info(
             "Programs executor successfully shut down"
         )
+
+
+class _PluginExecutionCompletedException(Exception):
+    """
+    Raised to signal to executor that plugin
+    execution was successfully completed
+    """
