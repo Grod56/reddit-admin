@@ -26,12 +26,12 @@ class Plugin(Generic[T], metaclass=ABCMeta):
 
     @abstractmethod
     def is_shut_down(self) -> bool:
-        """Check if plugin is shut down"""
+        """Check if plugins is shut down"""
         ...
 
     @abstractmethod
     def shut_down(self):
-        """Shut down the plugin"""
+        """Shut down the plugins"""
         ...
 
 
@@ -67,7 +67,7 @@ class AbstractPlugin(Plugin[T], metaclass=ABCMeta):
 
 class PluginInitializationError(InitializationError):
     """
-    Raised when initialization of a plugin module fails
+    Raised when initialization of a plugins module fails
     """
 
     def __init__(self, *args):

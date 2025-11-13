@@ -10,10 +10,10 @@ from typing import List
 from .utility.botcredentials import InvalidBotCredentialsError, BotCredentials,\
     BotCredentialsImplementation
 from .utility.miscellaneous import BotInitializationError
-from .plugin.asynchronouspluginsexecutor import AsynchronousPluginsExecutor
-from .plugin.plugin import Plugin
-from .plugin.pluginsexecutor import PluginsExecutor, PluginsExecutorInitializationError
-from .plugin.redditinterfacefactory import RedditInterfaceFactory, DefaultRedditInterfaceFactory
+from .plugintools.asynchronouspluginsexecutor import AsynchronousPluginsExecutor
+from .plugintools.plugin import Plugin
+from .plugintools.pluginsexecutor import PluginsExecutor, PluginsExecutorInitializationError
+from .plugintools.redditinterfacefactory import RedditInterfaceFactory, DefaultRedditInterfaceFactory
 
 
 class RedditAdmin(metaclass=ABCMeta):

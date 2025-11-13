@@ -4,7 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pytest_mock import MockFixture
 
 from ..core import get_reddit_admin
-from ..plugin.plugin import Plugin
+from ..plugintools.plugin import Plugin
 from ..program.program import Program
 from ..utility.botcredentials import BotCredentials
 
@@ -45,7 +45,7 @@ class TestRedditAdmin:
             plugin_1, plugin_2, plugin_3
         ])
         mocker.patch(
-            'src.redditadmin.plugin.redditinterfacefactory.is_reddit_authenticated',
+            'src.redditadmin.plugintools.redditinterfacefactory.is_reddit_authenticated',
             lambda _: True
         )
         bot_credentials = mocker.Mock(spec=BotCredentials)
@@ -103,7 +103,7 @@ class TestRedditAdmin:
             plugin_1, plugin_2, plugin_3
         ])
         mocker.patch(
-            'src.redditadmin.plugin.redditinterfacefactory.is_reddit_authenticated',
+            'src.redditadmin.plugintools.redditinterfacefactory.is_reddit_authenticated',
             lambda _: True
         )
         bot_credentials = mocker.Mock(spec=BotCredentials)

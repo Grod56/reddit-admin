@@ -35,7 +35,7 @@ class AsynchronousPluginsExecutor(AbstractPluginsExecutor):
         self.__initialize_plugins_executor()
 
     def __initialize_plugins_executor(self):
-        """Initialize the plugin executor"""
+        """Initialize the plugins executor"""
 
         self._pluginsExecutorLogger.debug('Initializing Plugins Executor')
 
@@ -113,10 +113,10 @@ class AsynchronousPluginsExecutor(AbstractPluginsExecutor):
                 )
             )
 
-        # Handle if plugin task failed to run
+        # Handle if plugins task failed to run
         except TypeError as ex:
             self._pluginsExecutorLogger.error(
-                "Failed to run the plugin '{}'. Error: {}".format(
+                "Failed to run the plugins '{}'. Error: {}".format(
                     program_command, str(ex.args)
                 ), exc_info=True
             )
@@ -202,6 +202,6 @@ class AsynchronousPluginsExecutor(AbstractPluginsExecutor):
 
 class _PluginExecutionCompletedException(Exception):
     """
-    Raised to signal to executor that plugin
+    Raised to signal to executor that plugins
     execution was successfully completed
     """
